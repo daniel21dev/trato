@@ -14,6 +14,6 @@ const AcuerdoSchema = Schema({
     }
 });
 
-const Acuerdo = model('Pay', AcuerdoSchema );
+const Acuerdo = model('Acuerdo', AcuerdoSchema );
 
 module.exports = Acuerdo;

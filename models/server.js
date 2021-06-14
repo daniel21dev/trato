@@ -26,6 +26,7 @@ class Server{
     routes(){
         this.app.use( this.paths.users, require('../routes/users') );
         this.app.use( this.paths.login, require('../routes/login') );
+        this.app.use( this.paths.pagos, require('../routes/pagos') );
     }
 
     async DBconnection(){
