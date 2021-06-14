@@ -6,9 +6,6 @@ const savePago = async(req,res) =>{
     const {usuarioPaga,usuarioRecive} = req.body;
 
     try {
-        if( !([usuarioPaga,usuarioRecive]).includes( req.user._id.toString() ) ){
-            res.status(401).json({ msg: "you can't post this pay"});
-        }
         const acuerdo = Acuerdo({usuarioPaga,usuarioRecive});
         await acuerdo.save();
         const pago = Pago({usuarioPaga,usuarioRecive,acuerdo: acuerdo._id});
@@ -19,6 +16,19 @@ const savePago = async(req,res) =>{
     }
 } 
 
+const getPagoByUsers = async(req,res) =>{
+     
+    const {usuarioPaga,usuarioRecive} = req.body;
+
+    try {
+        const pagos = await Pago.find({ usuarioPaga, usuarioRecive });
+        res.json({ pagos });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+}
+
 module.exports = {
-    savePago
+    savePago,
+    getPagoByUsers
 };
