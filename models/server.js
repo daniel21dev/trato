@@ -10,7 +10,8 @@ class Server{
         this.paths ={
             users: '/api/users',
             login: '/api/login',
-            pagos: '/api/pagos'
+            pagos: '/api/pagos',
+            acuerdo: '/api/acuerdo',
         }
         this.middlewares();
         this.routes();
@@ -27,6 +28,7 @@ class Server{
         this.app.use( this.paths.users, require('../routes/users') );
         this.app.use( this.paths.login, require('../routes/login') );
         this.app.use( this.paths.pagos, require('../routes/pagos') );
+        this.app.use( this.paths.acuerdo, require('../routes/acuerdo') );
     }
 
     async DBconnection(){

@@ -13,7 +13,7 @@ const verifyUser = ( req, res, next ) =>{
 
 const verifyUserPay = ( req, res, next ) =>{
     const {usuarioPaga,usuarioRecive} = req.body;
-    
+
     if( !([usuarioPaga,usuarioRecive]).includes( req.user._id.toString() ) ){
         return res.status(401).json({ msg: "you can't post this pay"});
     }

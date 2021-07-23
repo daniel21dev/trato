@@ -11,6 +11,11 @@ const PagoSchema = Schema({
         required: [true, 'userRecive is required'],
         ref: 'User'
     },
+    usuarioCreo:{
+        type: Schema.Types.ObjectId,
+        required: [true, 'user that creates is required'],
+        ref: 'User'
+    },
     fecha:{
         type: Date,
         default: Date.now()
@@ -25,6 +30,6 @@ const PagoSchema = Schema({
     }
 });
 
-const Pago = model('Pay', PagoSchema );
+const Pago = model('Pago', PagoSchema );
 
 module.exports = Pago;

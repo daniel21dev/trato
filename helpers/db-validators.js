@@ -1,3 +1,4 @@
+const Pago = require('../models/pago');
 const User = require('../models/user');
 
 const emailExists = async( email ) =>{
@@ -14,7 +15,22 @@ const userNameExists = async( userName ) =>{
     }
 }
 
+// Pays
+const payExists = async( id ) =>{
+    const payExists = await Pago.findById( id )
+    if( !payExists ){
+        throw new Error(`the pay does not exists`);
+    }
+}
+
+const enumEstados = ['PENDIENTE','CANCELADO','COMPLETADO']
+const estadoOpcionValida = async( estado ) =>{
+    if( !enumEstados.includes( estado ) ){
+        throw new Error(`the state ${ estado } is not valid!`);
+    }
+}
 module.exports = {
     emailExists,
-    userNameExists
+    userNameExists,
+    payExists
 }

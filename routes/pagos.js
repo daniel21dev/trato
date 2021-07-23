@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { savePago, getPagoByUsers } = require('../controllers/pagos');
+const { savePago, getPagoByUser, getPago, updateAcuerdo } = require('../controllers/pagos');
+const { payExists } = require('../helpers/db-validators');
 const { validateFields } = require('../middlewares/validate-fields');
 const { validateJWT } = require('../middlewares/validate-jwt');
 const { verifyUserPay } = require('../middlewares/verify-user');
@@ -12,12 +13,22 @@ router.post('/',[
     validateFields
 ], savePago)
 
-// pendiente
 router.get('/',[
     validateJWT,
-    verifyUserPay,
     validateFields
-], getPagoByUsers);
+], getPagoByUser);
 
+router.get('/:id',[
+    validateJWT,
+    check('id').isMongoId(),
+    validateFields
+], getPago);
+
+router.put('/:id',[
+    validateJWT,
+    check('id').isMongoId(),
+    check('id').custom( payExists ),
+    validateFields
+], updateAcuerdo);
 
 module.exports = router
