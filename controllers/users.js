@@ -1,10 +1,20 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const { generarJWT } = require('../helpers/generate-jwt');
 
 const getUsers = async(req,res)=>{
     try {
         const users = await User.find();
         res.json( users );
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+}
+
+
+const getMe = async(req,res)=>{
+    try {
+        res.json( {user: req.user} );
     } catch (error) {
         return res.status(500).json({ error });
     }
@@ -19,7 +29,8 @@ const saveUsers = async(req,res)=>{
         const salt = bcrypt.genSaltSync(10);
         user.password = bcrypt.hashSync(password, salt);
         await user.save();
-        res.json({ user });
+        const token = await generarJWT( user.id )
+        res.json({ user, token });
     } catch (error) {
         return res.status(500).json({ error });
     }
@@ -59,5 +70,6 @@ module.exports={
     getUsers,
     saveUsers,
     updateUsers,
-    deleteUsers
+    deleteUsers,
+    getMe
 }
