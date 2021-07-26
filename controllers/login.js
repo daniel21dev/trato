@@ -15,7 +15,10 @@ const loginController = async(req,res) =>{
             return res.status(400).json({msg: 'email or password incorrect'});
         }
         const token = await generarJWT( user.id );
-        res.json({token});;
+        res.json({
+            token,
+            user
+        });;
     } catch (error) {
         return res.status(500).json(error);
     }
