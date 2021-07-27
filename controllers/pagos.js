@@ -1,5 +1,6 @@
 const Acuerdo = require("../models/acuerdo");
 const Pago = require("../models/pago");
+const User = require("../models/user");
 
 const savePago = async(req,res) =>{
      
@@ -7,7 +8,7 @@ const savePago = async(req,res) =>{
 
     try {
         // create and save deal
-        const acuerdo = Acuerdo({usuarioPaga,usuarioRecive});
+        const acuerdo = Acuerdo({});
         await acuerdo.save();
         // create and save pay
         const pago = Pago({
@@ -19,6 +20,60 @@ const savePago = async(req,res) =>{
         await pago.save();
 
         res.json({ pago });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+} 
+
+const savePagoWithEmail = async(req,res) =>{
+     
+    const {usuarioPaga,usuarioRecive} = req.body;
+    const { user } = req
+
+    if( usuarioPaga === user.email || usuarioRecive === user.email ){
+        res.status(401).json({ msg: 'no puedes pagarte a ti mismo!'})
+    }
+
+    try {
+        if( usuarioPaga ){
+            // check if user exists
+            const otherUser = await User.findOne({ email: usuarioPaga })
+            if( !otherUser || !otherUser.active ){
+                return res.status(400).json({ msg: `The user whit email ${ usuarioPaga } does not exists`})
+            }
+            // create and save deal
+            const acuerdo = Acuerdo({});
+            await acuerdo.save();
+            // create and save pay
+            const pago = Pago({
+                usuarioPaga: otherUser.id,
+                usuarioRecive: user.id,
+                acuerdo: acuerdo._id,
+                usuarioCreo: req.user 
+            });
+            // save and return pay
+            await pago.save();
+            res.json({ pago });
+        }else{
+            // check if user exists
+            const otherUser = User.findOne({ email: usuarioRecive })
+            if( !otherUser || !otherUser.active ){
+                return res.status(400).json({ msg: `The user whit email ${ usuarioRecive } does not exists`})
+            }
+            // create and save deal
+            const acuerdo = Acuerdo({});
+            await acuerdo.save();
+            // create and save pay
+            const pago = Pago({
+                usuarioPaga: user.id,
+                usuarioRecive: otherUser.id ,
+                acuerdo: acuerdo._id,
+                usuarioCreo: user.id 
+            });
+            // save and return pay
+            await pago.save();
+            res.json({ pago });
+        }
     } catch (error) {
         res.status(500).json({ error });
     }
@@ -90,6 +145,7 @@ const updateAcuerdo = async( req, res ) =>{
 }
 module.exports = {
     savePago,
+    savePagoWithEmail,
     getPagoByUser,
     getPago,
     updateAcuerdo

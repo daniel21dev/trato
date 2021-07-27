@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { savePago, getPagoByUser, getPago, updateAcuerdo } = require('../controllers/pagos');
+const { savePago, getPagoByUser, getPago, updateAcuerdo, savePagoWithEmail } = require('../controllers/pagos');
 const { payExists } = require('../helpers/db-validators');
 const { validateFields } = require('../middlewares/validate-fields');
 const { validateJWT } = require('../middlewares/validate-jwt');
@@ -12,6 +12,10 @@ router.post('/',[
     verifyUserPay,
     validateFields
 ], savePago)
+
+router.post('/email',[
+    validateJWT
+], savePagoWithEmail)
 
 router.get('/',[
     validateJWT,
